@@ -1,18 +1,6 @@
-<div class="card bg-base-100 w-1/2 mx-auto p-10 mt-10 shadow-xl">
-  <h1 class="text-3xl text-red-500 ">
-    {{title}} !!!!
-  </h1>
-  <ul class="list">
-    @for ( user of users(); track user.id){
+<app-nav />
 
-      <li class="list-row items-center">
-        <img class="size-12 rounded-box" src="/user.jfif" alt="User Avatar" />
-        <div>{{user.displayName}}</div>
-     </li>
-   
-    }
-    </ul>
-</div>
+<app-home />
 
  
 
