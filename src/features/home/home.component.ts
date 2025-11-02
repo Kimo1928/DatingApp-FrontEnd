@@ -10,10 +10,9 @@ import { user } from '../../models/user';
 })
 export class HomeComponent {
 
-protected resgisterMode=signal(false);
+  protected registerMode = signal(false);
 
-showRegisterMode(value:boolean){
-  this.resgisterMode.set(value);
-}
-
+  showRegister(value: boolean) {
+    this.registerMode.set(value);
+  }
 }
