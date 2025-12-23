@@ -21,3 +21,18 @@ export type registerCreds={
     password:string
 
 }
+
+export interface userDTO{
+
+    id:string ,
+    displayName:string,
+    dateOfBirth:string,
+    created:string,
+    lastActive:string,
+    gender:string,
+    description?:string,
+    city:string,
+    country:string,
+
+    imageUrl?:string
+}

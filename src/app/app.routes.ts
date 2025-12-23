@@ -8,6 +8,9 @@ import { authGuard } from '../core/guards/auth.guard';
 import { TestErrorsComponent } from '../features/test-errors/test-errors.component';
 import { NotFoundComponent } from '../shared/errors/not-found/not-found.component';
 import { ServerErrorComponent } from '../shared/errors/server-error/server-error.component';
+import { UserProfileComponent } from '../features/uses/user-profile/user-profile.component';
+import { UserPhotosComponent } from '../features/uses/user-photos/user-photos.component';
+import { userResolver } from '../features/uses/user.resolver';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -16,8 +19,20 @@ export const routes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [authGuard],
         children: [
-            { path: 'members', component: UserListComponent },
-            { path: 'members/:id', component: UserDetailedComponent },
+            { path: 'users', 
+             
+                component: UserListComponent },
+            { path: 'users/:id', component: UserDetailedComponent ,
+                resolve: {user:userResolver},
+                runGuardsAndResolvers: 'always',
+                children: [
+                    {path: '', redirectTo: 'profile', pathMatch: 'full'},
+                    {path: 'profile', component: UserProfileComponent,title: 'Profile'},
+                    {path: 'photos', component: UserPhotosComponent, title: 'Photos'},
+                    {path: 'messages', component: UserProfileComponent, title: 'Messages'},
+
+                ]
+            },
             { path: 'lists', component: ListsComponent },
             { path: 'messages', component: MessagesComponent },
         ]
