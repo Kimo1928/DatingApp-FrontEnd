@@ -36,3 +36,10 @@ export interface userDTO{
 
     imageUrl?:string
 }
+
+export interface EditableUser{
+    displayName:string , 
+    description?:string,
+    city :string,
+    country:string
+}

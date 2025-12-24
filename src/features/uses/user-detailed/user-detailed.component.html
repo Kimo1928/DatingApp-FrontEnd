@@ -1,4 +1,4 @@
-@if (user() ;as user) {
+@if (this.userService.user() ;as user) {
 
     <div class="flex gap-6">
     
@@ -36,7 +36,15 @@
             </div>
         </div>
     <div class="card bg-base-100 w-3/4 p-3">
-        <h3 class="card-title text-3xl text-primary ">{{title()}}</h3>
+        <div class="flex justify-between items-center">
+            <h3 class="card-title text-3xl text-primary ">{{title()}}</h3>
+            @if(isCurrentUser()){
+                <button (click)="userService.editMode.set(!userService.editMode())"
+                class="btn btn-outline btn-primary">
+            {{userService.editMode() ? 'Cancel' : 'Edit Profile'}}
+            </button>
+            }
+        </div>
         <div class="divider"></div>
         <div>
             <router-outlet></router-outlet>

@@ -11,6 +11,7 @@ import { ServerErrorComponent } from '../shared/errors/server-error/server-error
 import { UserProfileComponent } from '../features/uses/user-profile/user-profile.component';
 import { UserPhotosComponent } from '../features/uses/user-photos/user-photos.component';
 import { userResolver } from '../features/uses/user.resolver';
+import { preventUnsavedChangesGuard } from '../core/guards/prevent-unsaved-changes.guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -27,7 +28,9 @@ export const routes: Routes = [
                 runGuardsAndResolvers: 'always',
                 children: [
                     {path: '', redirectTo: 'profile', pathMatch: 'full'},
-                    {path: 'profile', component: UserProfileComponent,title: 'Profile'},
+                    {path: 'profile', component: UserProfileComponent,title: 'Profile'
+                        ,canDeactivate:[preventUnsavedChangesGuard]
+                    },
                     {path: 'photos', component: UserPhotosComponent, title: 'Photos'},
                     {path: 'messages', component: UserProfileComponent, title: 'Messages'},
 

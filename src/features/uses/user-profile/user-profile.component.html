@@ -1,4 +1,4 @@
-@if(user();as user){
+@if(userservice.user();as user){
     <div class="flex flex-col gap-3">
         <div class="flex gap-3">
             <span class="font-semibold ">User since:</span>
@@ -9,6 +9,54 @@
             <span>{{user.lastActive|date:'MMM yyyy h:mm a'}}</span>
         </div>
         <h3 class="text-lg font-semibold text-primary" > About {{user.displayName}}</h3>
-        <div>{{user.description}}</div>
+        @if(userservice.editMode()){
+            <form #editForm="ngForm" (ngSubmit)="updateProfile() " class="flex flex-col w-full gap-4">
+                <label class="floating-label">
+                    <span>Display Name</span>
+                    <input
+                    class="input w-1/2" 
+                    type="text" 
+                    name="displayName" 
+                    [(ngModel)]="editableUser.displayName" 
+                    placeholder="Display Name " />
+                </label>
+                <label class="floating-label">
+                    <span>Description</span>
+                    <textarea
+                    class="textarea w-3/4 h-32" 
+                    name="description" 
+                    [(ngModel)]="editableUser.description" 
+                    placeholder="Description" >
+                </textarea>
+                </label>
+                <label class="floating-label">
+                    <span>City</span>
+                    <input
+                    class="input w-1/2" 
+                    type="text" 
+                    name="city" 
+                    [(ngModel)]="editableUser.city" 
+                    placeholder="City" />
+                </label>
+                <label class="floating-label">
+                    <span>Country</span>
+                    <input
+                    class="input w-1/2" 
+                    type="text" 
+                    name="country" 
+                    [(ngModel)]="editableUser.country" 
+                    placeholder="Country" />
+                </label>
+                <div class="flex self-end">
+                    <button type="submit" class="btn btn-success" 
+                    [disabled]="!editForm.dirty"
+                    >Submit</button>
+                </div>
+            </form>
+        }
+        @else{
+
+            <div>{{user.description}}</div>
+        }
     </div>
 }
