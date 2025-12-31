@@ -38,5 +38,16 @@ updateUser(user: EditableUser) {
 
 }
 
+uploadPhoto(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.http.post<Photo>(this.baseUrl + 'users/add-photo', formData);
+}
+setMainPhoto(photoId: string) {
+  return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
+}
 
+deletePhoto(photoId: number) {
+  return this.http.delete(this.baseUrl + 'users/' + photoId);
+}
 }

@@ -1,21 +1,26 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
 import { Photo } from '../../../models/photo';
-import { AsyncPipe } from '@angular/common';
+import { ImageUploadComponent } from "../../../shared/image-upload/image-upload.component";
+import { AccountService } from '../../../core/services/account.service';
+import { userDTO } from '../../../models/user';
+import { StarButtonComponent } from "../../../shared/star-button/star-button.component";
+import { DeleteButtonComponent } from "../../../shared/delete-button/delete-button.component";
 
 @Component({
   selector: 'app-user-photos',
-  imports: [AsyncPipe],
+  imports: [ImageUploadComponent, StarButtonComponent, DeleteButtonComponent],
   templateUrl: './user-photos.component.html',
   styleUrl: './user-photos.component.css'
 })
 export class UserPhotosComponent implements OnInit {
   
- private userservice = inject(UserService);
+ protected userservice = inject(UserService);
   private route =inject (ActivatedRoute);
-  protected photos$?:Observable<Photo[]>
+  protected accountService = inject(AccountService);
+  photos=signal<Photo[]>([]);
+  loading=signal(false);
 ngOnInit(): void {
   this.loadUserPhotos();
 }
@@ -24,18 +29,56 @@ ngOnInit(): void {
 loadUserPhotos(){
   const userId=this.route.parent?.snapshot.paramMap.get('id');
   if(userId)
-    this.photos$=this.userservice.getUserPhotos(userId) ; 
-     
+this.userservice.getUserPhotos(userId).subscribe({
+  next:photos=>{
+    this.photos.set(photos);
+  }
+})     
     
 
 }
-get photoMock(){
-  return Array.from({length:12},(_,i)=>({
-    url:'/user.jfif'
-  }))
+
+
+onUploadImage(file:File){
+  this.loading.set(true);
+  this.userservice.uploadPhoto(file).subscribe({
+    next:photo=>{ 
+      this.userservice.editMode.set(false);
+      this.loading.set(false);
+      this.photos.update(currentPhotos=>[...currentPhotos,photo]);
+    },
+    error:err=>{
+      this.loading.set(false);
+      console.log(err);
+    }
+  })
+
+}
+setMainPhoto(photo:Photo){ 
+  this.userservice.setMainPhoto(photo.id).subscribe({
+    next:()=>{
+      const currentUser=this.accountService.currentUser();
+      if(currentUser){
+        currentUser.imageUrl=photo.url;
+        this.accountService.setCurrentUser(currentUser);
+        this.userservice.user.update(user=> ({
+          ...user,
+          imageUrl:photo.url
+        }) as userDTO );
+      }
+    },
+    error:err=>{
+      console.log(err);
+    }
+  })
 }
 
-
+deletePhoto(photoId:number){
+  this.userservice.deletePhoto(photoId).subscribe({
+    next:()=>{
+      this.photos.update(currentPhotos=>currentPhotos.filter(p=>p.id !== photoId.toString()));
+    },
+    
+  })
 }
-
-
+}
