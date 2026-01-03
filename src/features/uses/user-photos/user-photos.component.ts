@@ -46,6 +46,11 @@ onUploadImage(file:File){
       this.userservice.editMode.set(false);
       this.loading.set(false);
       this.photos.update(currentPhotos=>[...currentPhotos,photo]);
+      
+      if(!this.userservice.user()?.imageUrl){
+        this.setMainPhotoLocal(photo);
+      
+    }
     },
     error:err=>{
       this.loading.set(false);
@@ -57,15 +62,7 @@ onUploadImage(file:File){
 setMainPhoto(photo:Photo){ 
   this.userservice.setMainPhoto(photo.id).subscribe({
     next:()=>{
-      const currentUser=this.accountService.currentUser();
-      if(currentUser){
-        currentUser.imageUrl=photo.url;
-        this.accountService.setCurrentUser(currentUser);
-        this.userservice.user.update(user=> ({
-          ...user,
-          imageUrl:photo.url
-        }) as userDTO );
-      }
+      this.setMainPhotoLocal(photo);
     },
     error:err=>{
       console.log(err);
@@ -80,5 +77,16 @@ deletePhoto(photoId:number){
     },
     
   })
+}
+setMainPhotoLocal(photo:Photo){
+  const currentUser=this.accountService.currentUser();
+  if(currentUser){
+    currentUser.imageUrl=photo.url;
+    this.accountService.setCurrentUser(currentUser);
+    this.userservice.user.update(user=> ({
+      ...user,
+      imageUrl:photo.url
+    }) as userDTO );
+  }
 }
 }

@@ -16,9 +16,13 @@ export type loginCreds ={
 
 export type registerCreds={
 
-    displayName:string,
+    UserName:string,
     email:string,
-    password:string
+    password:string,
+    gender:string,
+    city:string,
+    country:string,
+    dateOfBirth:string,
 
 }
 
@@ -41,5 +45,6 @@ export interface EditableUser{
     displayName:string , 
     description?:string,
     city :string,
-    country:string
+    country:string,
+    
 }
