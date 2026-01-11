@@ -1,6 +1,40 @@
-<div class="grid grid-cols-5 gap-6">
-@for (user of users$ |async; track user.id) {
+@if (paginatedUsers(); as paginatedResult) {
+  <div class="flex flex-col w-full">
+    <div class="flex justify-between items-center">
+      <div class="flex gap-3 items-center">
+        <button class="btn btn-primary" (click)="openModal()">Select Filters</button>
+        <button class="btn btn-neutral" (click)="resetFilters()">Reset Filters</button>
+        <div class="text-lg bg-base-100 py-2 px-4 border rounded-lg text-primary capitalize">
+          {{displayMessage}}
+        </div>
+      </div>
+      @if(paginatedResult.metadata; as metadata) {
+        <app-paginator
+        [pageNumber]="metadata.currentPage"
+        [totalCount]="metadata.totalCount"
+        [pageSize]="metadata.pageSize"
+        [totalPages]="metadata.totalPages"
+        (pageChanged)="onPageChanged($event)"
+        ></app-paginator>
+            }
+    </div>
+      @if (paginatedResult.items;as users) {
+        <div class="grid grid-cols-5 gap-6">
+          @for (user of users ; track $index) {
+            <app-user-card [user]="user"></app-user-card>
+          }
+        </div>
+      }
+  </div>
 
-<app-user-card [user]="user"></app-user-card>
-}
-</div>
+
+  
+   
+  }
+  
+
+  <app-filter-modal #filterModal
+  [hidden]="!paginatedUsers()"
+  (closeModal)="onClose()"
+  (submitData)="OnFilterChanged($event)"
+  />
