@@ -15,4 +15,19 @@ export class UserCardComponent {
 user=input.required<userDTO>();
 protected hasLiked=computed(()=> this.likeService.likesId().includes(this.user().id));
 
+
+toggleLike(event:Event){
+  event.stopPropagation();
+  this.likeService.toggleLike(this.user().id).subscribe({
+    next: ()=>{
+      if(this.hasLiked()){
+        this.likeService.likesId.update(ids => ids.filter(id => id !== this.user().id));
+      }
+      else{
+        this.likeService.likesId.update(ids => [...ids, this.user().id]);
+      }
+    }
+  });
+}
+
 }
