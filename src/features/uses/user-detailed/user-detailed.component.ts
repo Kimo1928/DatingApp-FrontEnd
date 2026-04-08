@@ -5,6 +5,7 @@ import { filter, Observable } from 'rxjs';
 import { userDTO } from '../../../models/user';
 import { AgePipe } from '../../../core/pipes/age.pipe';
 import { AccountService } from '../../../core/services/account.service';
+import { PersenceService } from '../../../core/services/persence.service';
 
 @Component({
   selector: 'app-user-detailed',
@@ -15,7 +16,7 @@ import { AccountService } from '../../../core/services/account.service';
 export class UserDetailedComponent {
 protected userService=inject(UserService);
 private route=inject(ActivatedRoute);
-
+protected presenceService = inject(PersenceService);
 private accountService=inject(AccountService);
 private router=inject(Router);
 protected title=signal<string|undefined>('Profile');

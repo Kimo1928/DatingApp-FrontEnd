@@ -13,6 +13,8 @@ import { UserPhotosComponent } from '../features/uses/user-photos/user-photos.co
 import { userResolver } from '../features/uses/user.resolver';
 import { preventUnsavedChangesGuard } from '../core/guards/prevent-unsaved-changes.guard';
 import { UserMessagesComponent } from '../features/uses/user-messages/user-messages.component';
+import { AdminComponent } from '../features/admin/admin.component';
+import { adminGuard } from '../core/guards/admin.guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -39,6 +41,7 @@ export const routes: Routes = [
             },
             { path: 'lists', component: ListsComponent },
             { path: 'messages', component: MessagesComponent },
+            { path: 'admin', component: AdminComponent ,canActivate:[adminGuard] },
         ]
     },
     {path: 'errors', component: TestErrorsComponent },

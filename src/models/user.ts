@@ -4,7 +4,8 @@ export interface user{
     displayName:string,
     email:string,
     imageUrl?:string,
-    token:string
+    token:string, 
+    roles:string[]
 
 }
 

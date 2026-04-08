@@ -5,10 +5,11 @@ import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ToastService } from '../../core/services/toast.service';
 import { themes } from './theme';
 import { BusyService } from '../../core/services/busy.service';
+import { HasRolesDirective } from '../../shared/has-roles.directive';
 
 @Component({
   selector: 'app-nav',
-  imports: [FormsModule, RouterLink, RouterLinkActive],
+  imports: [FormsModule, RouterLink, RouterLinkActive,HasRolesDirective],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css'
 })

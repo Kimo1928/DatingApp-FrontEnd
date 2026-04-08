@@ -1,10 +1,12 @@
-import { Component, effect, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { MessageService } from '../../../core/services/message.service';
 import { UserService } from '../../../core/services/user.service';
 import { Message } from '../../../models/message';
 import { DatePipe } from '@angular/common';
 import { TimeAgoPipe } from '../../../core/pipes/time-ago.pipe';
 import { FormsModule } from '@angular/forms';
+import { PersenceService } from '../../../core/services/persence.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-messages',
@@ -12,57 +14,49 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './user-messages.component.html',
   styleUrl: './user-messages.component.css'
 })
-export class UserMessagesComponent implements OnInit {
+export class UserMessagesComponent implements OnInit, OnDestroy{
   @ViewChild('messageEndRef') messageEndRef!:ElementRef;
   messageService=inject(MessageService)
   userService=inject(UserService)
 
-  protected messages=signal<Message[]>([])
+
+  private route = inject(ActivatedRoute);
+
+  protected presenceService = inject(PersenceService)
 
   protected messageContent:string='';
 
   constructor(){
     effect(()=>{
-      const currentMessages=this.messages();
+      const currentMessages=this.messageService.messageThread();
       if(currentMessages.length>0){
         this.scrollToBottom();
       }
     })
   }
+  
   ngOnInit():void{
-    this.loadMessages();
+    this.route.parent?.paramMap.subscribe({
+      next:params =>{
+        const otherUserId= params.get('id');
+        if(!otherUserId)
+          throw new Error('Cannot connect to hub ');
+        this.messageService.createHubConnection(otherUserId);
+      }
+      
+    })
 
   }
-  loadMessages(){
-    const userId=this.userService.user()?.id;
-    if(userId){
-      this.messageService.getMessageThread(userId).subscribe({
-        next:messages=>{
-          this.messages.set(messages.map(message =>({
-            ...message,
-            CurrentUserSender: message.senderId !== userId
-          })));
-        },
-      
-      })
-    }
-  }
+  
 
 
   sendMessage(){
     const recipientId=this.userService.user()?.id;
     if(!recipientId) return;
-    this.messageService.sendMessage(recipientId,this.messageContent).subscribe({
-      next:message=>{
-        this.messages.update(messages=>{
-          message.CurrentUserSender=true;
-          return[...messages,
-            message,
-          ]
-        });
-        this.messageContent='';
-      }
-    })
+    this.messageService.sendMessage(recipientId,this.messageContent)?.then(
+      ()=>this.messageContent=''
+    )
+    
   }
   scrollToBottom(){
     setTimeout(()=>{
@@ -71,5 +65,9 @@ export class UserMessagesComponent implements OnInit {
       }
     })
   
+  }
+
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
   }
 }
