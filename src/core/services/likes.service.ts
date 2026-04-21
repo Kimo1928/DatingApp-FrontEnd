@@ -15,7 +15,16 @@ export class LikesService {
 
 
   toggleLike(targetUserId: string) {
-    return this.http.post(`${this.baseUrl}likes/${targetUserId}`, {});
+    return this.http.post(`${this.baseUrl}likes/${targetUserId}`, {}).subscribe({
+      next: ()=>{
+        if(this.likesId().includes(targetUserId)){
+          this.likesId.update(ids => ids.filter(id => id !== targetUserId));
+        }
+        else{
+          this.likesId.update(ids => [...ids, targetUserId]);
+        }
+      }
+    });
   }
 
   getLikes(predicate: string, pageNumber: number, pageSize: number) { 

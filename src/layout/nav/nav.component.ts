@@ -22,12 +22,14 @@ private router=inject(Router);
 private toast=inject(ToastService);
 protected selectedTheme = signal<string>(localStorage.getItem('theme') || 'light');
 protected themes = themes;
-
+protected loading=signal(false);
 ngOnInit(): void {
   document.documentElement.setAttribute('data-theme', this.selectedTheme());
 }
 
 login(){
+
+  this.loading.set(true);
 
   this.account.login(this.creds).subscribe({
     next:(response)=>
@@ -40,7 +42,9 @@ login(){
     ,
     error:error=>{
       this.toast.error(error.error)  ;
-    }
+    },
+
+    complete: () => this.loading.set(false)
 
 
   })
@@ -61,5 +65,10 @@ handleSelectTheme(theme: string) {
   if(elem){
     elem.blur();
   }
+}
+handleSelectUserItem(){
+  const elem=document.activeElement as HTMLDivElement;
+  if(elem) elem.blur();
+
 }
 }
